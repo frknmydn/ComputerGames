@@ -10,7 +10,7 @@ class Bullet(pygame.sprite.Sprite):
         self.player = player
         self.SCREEN_WIDTH = SCREEN_WIDTH
         self.SCREEN_HEIGHT = SCREEN_HEIGHT
-        bulletAsset = pygame.image.load('Assets\Player\player-idle-00.png')
+        bulletAsset = pygame.image.load('Assets\Player\pinky_idle2.png')
         self.image = pygame.transform.scale(bulletAsset, (round(tile_size / 2), round(tile_size / 2)))
         self.rect = self.image.get_rect()
         self.level = None

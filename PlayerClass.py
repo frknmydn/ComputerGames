@@ -3,19 +3,22 @@ import pygame
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, SCREEN_WIDTH, SCREEN_HEIGHT):
+        playerAsset = pygame.image.load('Assets\Player\pinky_runRight1.png')
         super().__init__()
 
         width = 25
         height = 25
         self.SCREEN_WIDTH = SCREEN_WIDTH
         self.SCREEN_HEIGHT = SCREEN_HEIGHT
-        self.image = pygame.Surface([width, height])
+        self.image = pygame.transform.scale(playerAsset, (width, height))
         self.rect = self.image.get_rect()
         self.change_x = 0
         self.change_y = 0
         self.isClimbing = False
         self.gameOver = False
         self.level = None
+        self.levelComplete = False
+        self.currentLevel = 1
 
     def update(self):
         self.calculate_gravity()
@@ -51,6 +54,11 @@ class Player(pygame.sprite.Sprite):
         for coin in coin_hit_list:
             if self.rect.colliderect(coin.rect):
                 self.level.coinAmount += 1
+                if self.level.coinAmount >= 5:
+                    self.levelComplete = True
+                    self.currentLevel += 1
+                    print(self.currentLevel)
+
 
         bullet_hit_list = pygame.sprite.spritecollide(self, self.level.enemy_list, False)
         if bullet_hit_list:

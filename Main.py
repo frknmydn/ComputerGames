@@ -6,6 +6,7 @@ from pygame.locals import *
 from LadderClass import Ladder
 from PlayerClass import Player
 from WorldClass import World
+from MapsClass import Map
 
 
 class MainLogic:
@@ -22,7 +23,7 @@ class MainLogic:
         self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
         self.initialScreen = True
         pygame.display.set_caption('Oyun')
-
+        self.mapClass = Map()
         # variables
         self.tile_size = 40
 
@@ -46,38 +47,16 @@ class MainLogic:
         titlePos = title.get_rect(centerx=self.background.get_width() / 2, centery=250)
         self.screen.blit(title, titlePos)
 
-        #initial_screen_image_pos = (self.background.get_width() / 2 - 310, 160)
-        #self.screen.blit(initial_screen_image, initial_screen_image_pos)
+        # initial_screen_image_pos = (self.background.get_width() / 2 - 310, 160)
+        # self.screen.blit(initial_screen_image, initial_screen_image_pos)
 
-        description = self.font.render("press any key to start", True, (0,255,0))
+        description = self.font.render("press any key to start", True, (0, 255, 0))
         descriptionPos = description.get_rect(centerx=self.background.get_width() / 2, centery=330)
         self.screen.blit(description, descriptionPos)
 
+    def restartGame(self, currentLevel):
+        self.game_data = self.mapClass.getMap(currentLevel)
 
-
-    def restartGame(self):
-        self.game_data = [
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 0, 0, 0, 0, 0],
-            [0, 0, 0, 1, 0, 0, 1, 1, 1, 2, 2, 1, 1, 1, 0, 0, 1, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        ]
         self.background = pygame.transform.scale(self.backgroundAsset, (self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
 
         self.active_sprite_list = pygame.sprite.Group()
@@ -89,23 +68,36 @@ class MainLogic:
 
         self.active_sprite_list.add(self.player)
         self.player.level = self.world
+        self.player.currentLevel = currentLevel
         self.player.gameOver = False
+        self.player.level.coinAmount = 0
         print("Game Over İçi")
 
     def startGame(self):
-        self.restartGame()
+        self.restartGame(self.player.currentLevel)
         while self.run:
-            for event in pygame.event.get():
-                if event.type == pygame.KEYDOWN:
-                    self.initialScreen = False
             if self.initialScreen:
                 self.initial_Screen()
+                for menuEvent in pygame.event.get():
+                    if menuEvent.type == pygame.KEYDOWN:
+                        self.initialScreen = False
+
+                    elif menuEvent.type == pygame.QUIT:
+                        self.run = False
+                        pygame.quit()
+                        break
+
+
             else:
                 if self.player.gameOver:
                     self.draw_text("GAME OVER", 30, 300, 300)
                     pygame.time.wait(1500)
-                    self.restartGame()
+                    self.restartGame(1)
 
+                if self.player.levelComplete:
+                    self.draw_text("Level Complete", 30, 300, 300)
+                    pygame.time.wait(1500)
+                    self.restartGame(self.player.currentLevel)
 
                 self.clock.tick(self.FPS)
                 self.screen.blit(self.background, (0, 0))
@@ -114,31 +106,33 @@ class MainLogic:
                 self.world.draw(self.screen)
                 self.active_sprite_list.draw(self.screen)
 
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
+                for playerEvent in pygame.event.get():
+                    if playerEvent.type == pygame.QUIT:
                         self.run = False
 
-                    if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_LEFT:
+                    if playerEvent.type == pygame.KEYDOWN:
+                        if playerEvent.key == pygame.K_LEFT:
                             self.player.go_lef()
-                        if event.key == pygame.K_RIGHT:
+
+                        if playerEvent.key == pygame.K_RIGHT:
                             self.player.go_right()
-                        if event.key == pygame.K_SPACE:
+                        if playerEvent.key == pygame.K_SPACE:
                             self.player.jump()
-                        if event.key == pygame.K_UP:
+                        if playerEvent.key == pygame.K_UP:
                             if pygame.sprite.spritecollide(self.player, self.world.ladder_list, False):
                                 self.player.isClimbing = True
                                 self.player.climb()
-                        if event.key == pygame.K_DOWN:
+                        if playerEvent.key == pygame.K_DOWN:
                             if pygame.sprite.spritecollide(self.player, self.world.ladder_list, False):
                                 self.player.isClimbing = True
                                 self.player.climb_down()
 
-                    if event.type == pygame.KEYUP:
-                        if event.key == pygame.K_LEFT and self.player.change_x < 0:
+                    if playerEvent.type == pygame.KEYUP:
+                        if playerEvent.key == pygame.K_LEFT and self.player.change_x < 0:
                             self.player.stop()
-                        if event.key == pygame.K_RIGHT and self.player.change_x > 0:
+                        if playerEvent.key == pygame.K_RIGHT and self.player.change_x > 0:
                             self.player.stop()
+
                 self.player.rect.clamp_ip(self.screen.get_rect())
             pygame.display.flip()
 
