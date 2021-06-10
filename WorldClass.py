@@ -5,6 +5,8 @@ from LadderClass import Ladder
 from BulletClass import Bullet
 from BrickClass import Brick
 from CoinClass import Coin
+import PlayerClass
+
 
 class World(Level):
     def __init__(self, data, SCREEN_WIDTH, SCREEN_HEIGHT, tile_size, player):
@@ -41,6 +43,8 @@ class World(Level):
                     coin = Coin(count_col, count_row, tile_size)
                     self.tile_list.append(coin)
                     self.coin_list.add(coin)
+
+
                 count_col += 1
             count_row += 1
 

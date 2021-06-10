@@ -18,7 +18,7 @@ class Bullet(pygame.sprite.Sprite):
         if flag == 1:
             self.rect.x = random.randrange(SCREEN_WIDTH - self.rect.width)
             self.rect.y = random.randrange(-50, -40)
-            self.speedy = random.randrange(1, 8)
+            self.speedy = random.randrange(3, 8)
 
         if flag == 2:
             self.rect.y = random.randrange(SCREEN_HEIGHT - self.rect.height)
