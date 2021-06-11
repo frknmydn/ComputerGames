@@ -17,7 +17,7 @@ class Player(pygame.sprite.Sprite):
         self.gameOver = False
         self.level = None
         self.levelComplete = False
-        self.currentLevel = 3
+        self.currentLevel = 1
         self.walkCount = 0
         self.jump_sound = pygame.mixer.Sound("Sounds\jump.wav")
         self.coin_sound = pygame.mixer.Sound("Sounds\gold.wav")
